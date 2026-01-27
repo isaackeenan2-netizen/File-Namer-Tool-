@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Name Generator</title>
+
+  <!-- Montserrat font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --green: #1d401d;
+      --teal: #a0c7c4;
+      --white: #ffffff;
+      --navy: #173759;
+      --red-error: #d32f2f;
+    }
+
+    html, body { height: 100%; margin: 0; }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--white);
+      color: var(--navy);
+      font-family: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    select, input, button {
+      font-family: inherit;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      padding: 1rem;
+    }
+
+    /* FORM: 9 equal columns across full width, no wrapping */
+    #form {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  column-gap: 0.5rem;
+  align-items: start;   /* ✅ top-align all fields */
+  width: 100%;
+}
+
+
+    .field-wrapper {
+      width: 100%;
+    }
+
+    .border-error { border-color: var(--red-error) !important; }
+    .text-error { color: var(--red-error); }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div
+      id="generator-container"
+      class="w-full bg-[--teal] rounded-xl shadow-xl px-4 py-6"
+    >
+      <div class="text-center mb-6">
+        <h1 class="text-3xl font-extrabold text-[--green] tracking-wide">
+           File Naming Conventions Support Tool <span class="align-super text-sm">©</span>
+        </h1>
+        <p class="text-[--navy] text-sm italic mt-1">
+          Embedding Operational Systems to Build a Self-Sustaining, Legacy-Minded School Culture
+        </p>
+      </div>
+
+      <div class="mb-4">
+  <h2 class="font-semibold text-sm text-center text-[--navy] mb-2">
+    Refer to 
+    <a 
+      href="https://sites.google.com/education.nsw.gov.au/handbookairdshs/guides-a-z?authuser=0" 
+      target="_blank" 
+      class="text-blue-700 underline hover:text-[--green] transition-colors"
+    >
+      The Handbook
+    </a> 
+    for further supporting guides
+  </h2>
+  <form id="form" class="pb-4"></form>
+</div>
+
+      <div class="grid grid-cols-1 gap-6">
+        <div class="bg-white/50 p-4 rounded-lg max-w-4xl mx-auto w-full">
+          <h2 class="font-bold text-lg mb-2 text-center text-[--navy]">
+            Generated File Name
+          </h2>
+          <div
+            id="fileName"
+            class="p-3 bg-white border rounded text-[--green] font-mono text-sm overflow-x-auto break-all min-h-[44px]"
+          >_</div>
+
+          <!-- Buttons row -->
+          <div class="mt-4 flex flex-wrap justify-center gap-4">
+            <button
+              id="copyBtn"
+              type="button"
+              class="bg-[--green] text-white px-4 py-2 text-sm rounded-lg hover:bg-opacity-90 transition-colors"
+            >
+              📋 Copy Name
+            </button>
+            <button
+              id="storeBtn"
+              type="button"
+              class="bg-[--teal] text-[--navy] px-4 py-2 text-sm rounded-lg hover:bg-opacity-90 transition-colors border border-[--navy]/40"
+            >
+              ➕ Store Name
+            </button>
+            <button
+              id="resetBtn"
+              type="button"
+              class="bg-[--navy] text-white px-4 py-2 text-sm rounded-lg hover:bg-opacity-90 transition-colors"
+            >
+              🔄 Reset All
+            </button>
+          </div>
+
+	  <div class="mt-3 text-center">
+            <p class="text-[10px] text-[--navy] opacity-70">
+              Tool used <span id="usageCounter" class="font-bold text-[--green]">...</span> times
+            </p>
+          </div>
+
+          <!-- Stored file names list -->
+          <hr class="my-4 border-[--navy]/30" />
+          <div>
+            <h3 class="font-semibold text-sm text-center mb-2 text-[--navy]">
+              Stored File Names
+            </h3>
+            <div
+              id="storedList"
+              class="max-h-40 overflow-y-auto text-xs bg-white/40 border border-dashed border-[--navy]/30 rounded p-2"
+            >
+              <p class="text-xs text-gray-600 italic text-center">
+                No stored file names yet.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer back to white, logo + text doubled -->
+  <footer class="text-center text-lg text-gray-700 py-6 flex flex-col items-center bg-white">
+    <img
+      src="https://assets.schools.nsw.gov.au/content/dam/doe/sws/schools/a/airds-h/logo.png"
+      alt="Airds High School Logo"
+      class="w-40 h-auto mb-3 opacity-90"
+    />
+    <p class="font-semibold">
+      Airds High School | School Operational Excellence | School Excellence
+    </p>
+  </footer>
+
+  <script>
+// ===== Helper: Unit/Topic mappings =====
+const UNIT_TOPICS_BY_COURSE = {
+  // SCIENCE
+  "BIO_NESA11030_STG6_YR11": [
+    "Module1_CellsAsTheBasisOfLife",
+    "Module2_OrganisationOfLivingThings",
+    "Module3_BiologicalDiversity",
+    "Module4_EcosystemDynamics"
+  ],
+  "BIO_NESA15030_STG6_YR12": [
+    "Module5_Heredity",
+    "Module6_GeneticChange",
+    "Module7_InfectiousDisease",
+    "Module8_Non-infectiousDiseaseAndDisorders"
+  ],
+  "IVS_NESA11215_STG6_YR11": [
+    "Module1_CauseAndEffectObserving",
+    "Module2_CauseAndEffectInferencesAndGeneralisations",
+    "Module3_ScientificModels",
+    "Module4_TheoriesAndLaws"
+  ],
+  "IVS_NESA15215_STG6_YR12": [
+    "Module5_ScientificInvestigations",
+    "Module6_Technologies",
+    "Module7_FactOrFallacy",
+    "Module8_ScienceAndSociety"
+  ],
+
+  // ENGLISH
+  "DRA_NESA11090_STG6_YR11": [
+    "ImprovisationPlaybuildingAndActing",
+    "ElementsOfProductionInPerformance",
+    "TheatricalTraditionsAndPerformanceStyles."
+  ],
+  "DRA_NESA15090_STG6_YR12": [
+    "Topic1_DramaticTraditionsInAustralia",
+    "Topic2_ContemporaryAustralianTheatrePractice",
+    "Topic3_TheVoiceOfWomenInTheatre",
+    "Topic4_ApproachesToActing",
+    "Topic5_VerbatimTheatre",
+    "Topic6_BlackComedy",
+    "Topic7_MultiDisciplineThreatre",
+    "Topic8_SignificantPlaysOfThe20ThCentury",
+    "Topic9_JapaneseTraditionalAndContemporaryTheatre"
+  ],
+  "EST_NESA11130_STG6_YR11": [
+    "ReadingToWrite",
+    "ContemporaryPossibilities",
+    "CloseStudyOfLiterature"
+  ],
+  "EST_NESA15130_STG6_YR12": [
+    "CommonModule_TextsAndHumanExperiences",
+    "ModuleA_LanguageIdentityCulture",
+    "ModuleB_CloseStudyOfLiterature",
+    "ModuleC_TheCraftOfWriting"
+  ],
+  "ESU_NESA30105_STG6_YR11": [
+    "MandatoryModule_AchievingThroughEnglish",
+    "ModuleA_WeAreAustralians",
+    "ModuleB_TellingUsAllAboutIt",
+    "ModuleC_OnTheRoad",
+    "ModuleD_DigitalWorlds",
+    "ModuleE_PlayingTheGame",
+    "ModuleF_MiTunesAndText",
+    "ModuleG_LocalHeroes",
+    "ModuleH_PartOfAFamily",
+    "ModuleI_DiscoveryAndInvestigations",
+    "ModuleJ_InTheMarketplace",
+    "ModuleK_TheBigScreen",
+    "ModuleL_WhoDoIThinkIAm",
+    "ModuleM_LandscapesOfTheMind",
+    "ModuleN_TheWayWeWere"
+  ],
+  "ESU_NESA15125_STG6_YR12": [
+    "CommonModule_TextsAndHumanExperiences",
+    "ModuleA_WeAreAustralians",
+    "ModuleB_TellingUsAllAboutIt",
+    "ModuleC_OnTheRoad",
+    "ModuleD_DigitalWorlds",
+    "ModuleE_PlayingTheGame",
+    "ModuleF_MiTunesAndText",
+    "ModuleG_LocalHeroes",
+    "ModuleH_PartOfAFamily",
+    "ModuleI_DiscoveryAndInvestigations",
+    "ModuleJ_InTheMarketplace",
+    "ModuleK_TheBigScreen",
+    "ModuleL_WhoDoIThinkIAm",
+    "ModuleM_LandscapesOfTheMind",
+    "ModuleN_TheWayWeWere"
+  ],
+
+  // CREATIVE ARTS – MUSIC 1
+  "MU1_NESA11280_STG6_YR11": [
+    "AnInstrumentAndItsRepertoire",
+    "AustralianMusic",
+    "BaroqueMusic",
+    "Jazz",
+    "MedievalMusic",
+    "MethodsOfNotatingMusic",
+    "MusicAndReligion",
+    "MusicAndTheRelatedArts",
+    "MusicForLargeEnsembles",
+    "MusicForRadioFilmTelevisionAndMultimedia",
+    "MusicForSmallEnsembles",
+    "MusicInEducation",
+    "MusicOfACulture(PreliminaryCourse)",
+    "MusicOfACulture(HSCCourse)",
+    "MusicOfThe18thCentury",
+    "MusicOfThe19thCentury",
+    "MusicOfThe20thAnd21stCenturies",
+    "PopularMusic",
+    "RenaissanceMusic",
+    "RockMusic",
+    "TechnologyAndItsInfluenceOnMusic",
+    "TheatreMusic"
+  ],
+  "MU1_NESA15290_STG6_YR12": [
+    "AnInstrumentAndItsRepertoire",
+    "AustralianMusic",
+    "BaroqueMusic",
+    "Jazz",
+    "MedievalMusic",
+    "MethodsOfNotatingMusic",
+    "MusicAndReligion",
+    "MusicAndTheRelatedArts",
+    "MusicForLargeEnsembles",
+    "MusicForRadioFilmTelevisionAndMultimedia",
+    "MusicForSmallEnsembles",
+    "MusicInEducation",
+    "MusicOfACulture(PreliminaryCourse)",
+    "MusicOfACulture(HSCCourse)",
+    "MusicOfThe18thCentury",
+    "MusicOfThe19thCentury",
+    "MusicOfThe20thAnd21stCenturies",
+    "PopularMusic",
+    "RenaissanceMusic",
+    "RockMusic",
+    "TechnologyAndItsInfluenceOnMusic",
+    "TheatreMusic"
+  ],
+
+  // CREATIVE ARTS – VET VIsual Design
+  "VID_NESA35101_STG6_YR11": [
+    "ModuleGD1_PublicationsAndInformation",
+    "ModuleGD2_IllustrationAndCartooning",
+    "ModuleGD3_InteractiveAndMultimedia",
+    "ModuleWD1_ClothingAndImage",
+    "ModuleWD2_JewelleryAndAccessories",
+    "ModuleWD3_Textiles",
+    "ModulePD1_Packaging",
+    "ModulePD2_Furniture",
+    "ModulePD3_Industrial",
+    "ModuleIED1_StructuresAndEnvironments",
+    "ModuleIED2_StageSetsAndProps",
+    "ModuleIED3_Interiors",
+    "GM_Individual/CollaborativeDesignProject",
+    "MM_WorkHealthAndSafety"
+  ],
+  "VID_NESA35103_STG6_YR12": [
+    "ModuleGD1_PublicationsAndInformation",
+    "ModuleGD2_IllustrationAndCartooning",
+    "ModuleGD3_InteractiveAndMultimedia",
+    "ModuleWD1_ClothingAndImage",
+    "ModuleWD2_JewelleryAndAccessories",
+    "ModuleWD3_Textiles",
+    "ModulePD1_Packaging",
+    "ModulePD2_Furniture",
+    "ModulePD3_Industrial",
+    "ModuleIED1_StructuresAndEnvironments",
+    "ModuleIED2_StageSetsAndProps",
+    "ModuleIED3_Interiors",
+    "GM_Individual/CollaborativeDesignProject",
+    "MM_WorkHealthAndSafety"
+  ],
+
+  // HSIE – MODERN HISTORY
+  "MOH_NESA11270_STG6_YR11": [
+    "InvestigatingModernHistory",
+    "InvestigatingModernHistory_TheNatureOfModernHistory",
+    "InvestigatingModernHistory_TheNatureOfModernHistory_TheInvestigationOfHistoricSitesAndSources",
+    "InvestigatingModernHistory_TheNatureOfModernHistory_TheContestabilityOfThePast",
+    "InvestigatingModernHistory_TheNatureOfModernHistory_TheConstructionOfModernHistories",
+    "InvestigatingModernHistory_TheNatureOfModernHistory_HistoryAndMemory",
+    "InvestigatingModernHistory_TheNatureOfModernHistory_TheRepresentationAndCommemorationOfThePast",
+    "InvestigatingModernHistory_CaseStudyA1_AustraliaAndTheRiseOfCommunism",
+    "InvestigatingModernHistory_CaseStudyA2_MakingChangeDayOfMourningToMabo",
+    "InvestigatingModernHistory_CaseStudyA3_TheChangingNatureOfAnglo-IrishRelations",
+    "InvestigatingModernHistory_CaseStudyA4_TheDeclineAndFallOfTheRomanovDynasty",
+    "InvestigatingModernHistory_CaseStudyA5_TheTrans-AtlanticSlaveTrade",
+    "InvestigatingModernHistory_CaseStudyA6_TheAmericanCivilWar",
+    "InvestigatingModernHistory_CaseStudyA7_TheRiseOfTheEnvironmentalMovement",
+    "InvestigatingModernHistory_CaseStudyA8_WomensMovements",
+    "InvestigatingModernHistory_CaseStudyB1_TheBoxerRebellionInChina",
+    "InvestigatingModernHistory_CaseStudyB2_TheBritishInIndiaAndBurma",
+    "InvestigatingModernHistory_CaseStudyB3_TheMeijiRestoration",
+    "InvestigatingModernHistory_CaseStudyB4_TibetInTheModernWorld",
+    "InvestigatingModernHistory_CaseStudyB5_MakingContactWithThePacific",
+    "InvestigatingModernHistory_CaseStudyB6_TheMakingOfModernSouthAfrica",
+    "InvestigatingModernHistory_CaseStudyB7_TheOriginsOfTheArab-IsraeliConflict",
+    "InvestigatingModernHistory_CaseStudyB8_TheCubanRevolution",
+    "HistoricalInvestigation",
+    "TheShapingOfTheModernWorld",
+    "TheShapingOfTheModernWorld_TheEnlightenment",
+    "TheShapingOfTheModernWorld_TheFrenchRevolution",
+    "TheShapingOfTheModernWorld_TheAgeOfImperialism",
+    "TheShapingOfTheModernWorld_TheIndustrialAge",
+    "TheShapingOfTheModernWorld_WorldWarI",
+    "TheShapingOfTheModernWorld_TheEndOfTheEmpire"
+  ],
+  "MOH_NESA15270_STG6_YR12": [
+    "CoreStudy_PowerAndAuthorityInTheModernWorld1919-1946",
+    "NationalStudies_China1927–1949",
+    "NationalStudies_India1942–1984",
+    "NationalStudies_Indonesia1945-2005",
+    "NationalStudies_Japan1904-1937",
+    "NationalStudies_Iran1945-1989",
+    "PeaceAndConflict_ConflictInIndochina1954-1979",
+    "PeaceAndConflict_ConflictInThePacific1937-1951",
+    "PeaceAndConflict_ConflictInTheGulf1980-2011",
+    "PeaceAndConflict_TheArab-IsraeliConflict1948-1996",
+    "ChangeInTheModernWorld_Pro-DemocracyMovementInBurma1945-2010",
+    "ChangeInTheModernWorld_TheCulturalRevolutionToTiananmenSquare1966-1989",
+    "ChangeInTheModernWorld_ApartheidInSouthAfrcia1960-1994"
+  ],
+
+  // HSIE – WORK STUDIES
+  "WST_NESA35201_STG6_YR11": [
+    "Core_MyWorkingLife",
+    "Module1_InTheWorkplace",
+    "Module2_PreparingJobApplications",
+    "Module3_WorkplaceCommunication",
+    "Module4_TeamworkAndEnterpriseSkills",
+    "Module5_ManagingWorkAndLifeCommitments",
+    "Module6_PersonalFinance",
+    "Module7_WorkplaceIssues",
+    "Module8_Self-Employment",
+    "Module9_TeamEnterpriseProject",
+    "Module10_ExperiencingWork"
+  ],
+  "WST_NESA35203_STG6_YR12": [
+    "Core_MyWorkingLife",
+    "Module1_InTheWorkplace",
+    "Module2_PreparingJobApplications",
+    "Module3_WorkplaceCommunication",
+    "Module4_TeamworkAndEnterpriseSkills",
+    "Module5_ManagingWorkAndLifeCommitments",
+    "Module6_PersonalFinance",
+    "Module7_WorkplaceIssues",
+    "Module8_Self-Employment",
+    "Module9_TeamEnterpriseProject",
+    "Module10_ExperiencingWork"
+  ],
+
+  // TAS – ENTERPRISE COMPUTING
+  "ECP_NESA11175_STG6_YR11": [
+    "InteractiveMediaAndTheUserExperience",
+    "NetworkingSystemsAndSocialComputing",
+    "PrinciplesOfCybersecurity"
+  ],
+  "ECP_NESA15175_STG6_YR12": [
+    "DataScience",
+    "DataVisualisation",
+    "IntelligentSystems",
+    "EnterpriseProject"
+  ],
+
+  // PDHPE – ECEC
+  "EEC_NESA31010_STG6_YR11": [
+    "CoreA_PregnancyAndChildbirth",
+    "CoreB_ChildGrowthAndDevelopment",
+    "CoreC_PromotingPositiveBehaviour",
+    "Module1_LearningExperiencesForYoungChildren",
+    "Module2_PlayAndTheDevelopingChild",
+    "Module3_StartingSchool",
+    "Module4_GenderAndYoungChildren",
+    "Module5_ChildrenAndChange",
+    "Module6_ChildrenOfAboriginalAndTorresStraitIslanderCommunities",
+    "Module7_HistoricalAndCulturalContextsOfChildhood",
+    "Module8_TheChildrenServicesIndustry",
+    "Module9_YoungChildrenAndMedia",
+    "Module10_YoungChildrenAndTheLaw",
+    "Module11_ChildrenLiterature",
+    "Module12_FoodAndNutrition",
+    "Module13_ChildHealthAndSafety",
+    "Module14_YoungChildrenWithSpecialNeeds"
+  ],
+  "EEC_NESA31012_STG6_YR12": [
+    "Module1_LearningExperiencesForYoungChildren",
+    "Module2_PlayAndTheDevelopingChild",
+    "Module3_StartingSchool",
+    "Module4_GenderAndYoungChildren",
+    "Module5_ChildrenAndChange",
+    "Module6_ChildrenOfAboriginalAndTorresStraitIslanderCommunities",
+    "Module7_HistoricalAndCulturalContextsOfChildhood",
+    "Module8_TheChildrenServicesIndustry",
+    "Module9_YoungChildrenAndMedia",
+    "Module10_YoungChildrenAndTheLaw",
+    "Module11_ChildrenLiterature",
+    "Module12_FoodAndNutrition",
+    "Module13_ChildHealthAndSafety",
+    "Module14_YoungChildrenWithSpecialNeeds"
+  ],
+
+  // PDHPE – SLR
+  "SLR_NESA35015_STG6_YR11": [
+    "1. Aquatics",
+    "2. Athletics",
+    "3. Dance",
+    "4. First Aid and Sports Injuries",
+    "5. Fitness",
+    "6. Games and Sports Applications I",
+    "7. Games and Sports Applications II",
+    "8. Gymnastics",
+    "9. Healthy Lifestyle",
+    "10. Individual Games and Sports Applications",
+    "11. Outdoor Recreation",
+    "12. Resistance Training",
+    "13. Social Perspectives of Games and Sports",
+    "14. Sports Administration",
+    "15. Sports Coaching and Training"
+  ],
+
+  // LOTE – JAPANESE
+  "JPC_NESA11750_STG6_YR11": [
+    "TheIndividual",
+    "TheJapaneseSpeakingCommunities",
+    "TheChangingWorld"
+  ],
+  "JPC_NESA15830_STG6_YR12": [
+    "TheIndividual",
+    "TheJapaneseSpeakingCommunities",
+    "TheChangingWorld"
+  ],
+
+  // MATHEMATICS – GENERAL / STANDARD 2
+  "MAS_NESA11236_STG6_YR11": [
+    "TopicAlgebra_FormulaeAndEquations",
+    "TopicAlgebra_LinearRelationships",
+    "TopicMeasurement_ApplicationsOfMeasurement",
+    "TopicMeasurement_WorkingWithTime",
+    "TopicFinancialMathematics_MoneyMatters",
+    "TopicStatisticalAnalysis_DataAnalysis",
+    "TopicStatisticalAnalysis_RelativeFrequencyAndProbability"
+  ],
+  "MS1_NESA15231_STG6_YR12": [
+    "TopicAlgebra_TypesOfRelationships",
+    "TopicMeasurement_RightAngledTriangles",
+    "TopicMeasurement_Rates",
+    "TopicMeasurement_ScaleDrawings",
+    "TopicFinancialMathematics_Investment",
+    "TopicFinancialMathematics_DepreciationAndLoans",
+    "TopicStatisticalAnalysis_FurtherStatisticalAnalysis",
+    "TopicNetworks_NetworksAndPaths"
+  ],
+  "MS2_NESA15232_STG6_YR12": [
+    "TopicAlgebra_TypesOfRelationships",
+    "TopicMeasurement_NonRightAngledTrigonometry",
+    "TopicMeasurement_RatesAndRatios",
+    "TopicFinancialMathematics_InvestmentAndLoans",
+    "TopicFinancialMathematics_Annuities",
+    "TopicStatisticalAnalysis_BivariateDataAnalysis",
+    "TopicStatisticalAnalysis_TheNormalDistribution",
+    "TopicNetworks_NetworksConcepts",
+    "TopicNetworks_CriticalPathAnalysis"
+  ]
+};
+
+// ===== Subject codes grouped by KLA (alphabetical inside each KLA) =====
+const SUBJECTS_BY_KLA = {
+"Airds High School": [
+    "AHS_8493"
+ ],
+ 
+English: [
+    "DRA_NESA11090_STG6_YR11",
+    "DRA_NESA15090_STG6_YR12",
+    "DRE_NESA2011_STG5_100",
+    "ENG_NESA300_STG4_YR7",
+    "ENG_NESA300_STG4_YR8",
+    "ENG_NESA300_STG5_YR9",
+    "ENG_NESA300_STG5_YR10",
+    "ENG_NESA303_STG4_AU",
+    "ENG_NESA303_STG4_IM",
+    "ENG_NESA303_STG4_IO",
+    "ENG_NESA303_STG4_MC",
+    "ENG_NESA303_STG5_AU",
+    "ENG_NESA303_STG5_IM",
+    "ENG_NESA303_STG5_IO",
+    "ENG_NESA303_STG5_MC",
+    "EST_NESA11130_STG6_YR11",
+    "EST_NESA15130_STG6_YR12",
+    "ESU_NESA30105_STG6_YR11",
+    "ESU_NESA15125_STG6_YR12"
+   
+  ],
+
+  Mathematics: [
+    "MAS_NESA11236_STG6_YR11",
+    "MAT_NESA326_STG4_YR7",
+    "MAT_NESA326_STG4_YR8",
+    "MAT_NESA326_STG5_YR10",
+    "MAT_NESA326_STG5_YR9",
+    "MAT_NESA327_STG4_AU",
+    "MAT_NESA327_STG4_IM",
+    "MAT_NESA327_STG4_IO",
+    "MAT_NESA327_STG4_MC",
+    "MAT_NESA327_STG5_AU",
+    "MAT_NESA327_STG5_IM",
+    "MAT_NESA327_STG5_IO",
+    "MAT_NESA327_STG5_MC",
+    "MS1_NESA15231_STG6_YR12",
+    "MS2_NESA15232_STG6_YR12",
+    "NRY_NESA30130_STG6_YR11",
+    "NRY_NESA30140_STG6_YR12"
+  ],
+
+  Science: [
+    "BIO_NESA11030_STG6_YR11",
+    "BIO_NESA15030_STG6_YR12",
+    "ISM_DAEC8493_STG5_100",
+    "IVS_NESA11215_STG6_YR11",
+    "IVS_NESA15215_STG6_YR12",
+    "SCI_NESA350_STG4_YR7",
+    "SCI_NESA350_STG4_YR8",
+    "SCI_NESA350_STG5_YR9",
+    "SCI_NESA350_STG5_YR10",
+    "SCI_NESA352_STG4_AU",
+    "SCI_NESA352_STG4_IM",
+    "SCI_NESA352_STG4_IO",
+    "SCI_NESA352_STG4_MC",
+    "SCI_NESA352_STG5_AU",
+    "SCI_NESA352_STG5_IM",
+    "SCI_NESA352_STG5_IO",
+    "SCI_NESA352_STG5_MC"
+  ],
+
+  HSIE: [
+    "ABS_NESA11000_STG6_YR11",
+    "ABS_NESA15000_STG6_YR12",
+    "ABS_NESA411_STG5_100",
+    "ANH_NESA11020_STG6_YR11",
+    "ANH_NESA15020_STG6_YR12",
+    "COM_NESA431_STG5_100",
+    "GEO_NESA4015_STG4_YR7",
+    "GEO_NESA4015_STG4_YR8",
+    "GEO_NESA4015_STG5_YR9",
+    "GEO_NESA4015_STG5_YR10",
+    "GEO_NESA4018_STG4_AU",
+    "GEO_NESA4018_STG4_IM",
+    "GEO_NESA4018_STG4_IO",
+    "GEO_NESA4018_STG4_MC",
+    "GEO_NESA4018_STG5_AU",
+    "GEO_NESA4018_STG5_IM",
+    "GEO_NESA4018_STG5_IO",
+    "GEO_NESA4018_STG5_MC",
+    "HEL_NESA451_STG5_100",
+    "HIS_NESA4007_STG4_YR7",
+    "HIS_NESA4007_STG4_YR8",
+    "HIS_NESA4007_STG5_YR9",
+    "HIS_NESA4007_STG5_YR10",
+    "HIS_NESA4008_STG4_AU",
+    "HIS_NESA4008_STG4_IM",
+    "HIS_NESA4008_STG4_IO",
+    "HIS_NESA4008_STG4_MC",
+    "HIS_NESA4008_STG5_AU",
+    "HIS_NESA4008_STG5_IM",
+    "HIS_NESA4008_STG5_IO",
+    "HIS_NESA4008_STG5_MC",
+    "MOH_NESA11270_STG6_YR11",
+    "MOH_NESA15270_STG6_YR12",
+    "WST_NESA35201_STG6_YR11",
+    "WST_NESA35203_STG6_YR12"
+  ],
+
+  TAS: [
+    "BCT_NESA1803_STG5_100",
+    "ECP_NESA11175_STG6_YR11",
+    "ECP_NESA15175_STG6_YR12",
+    "FDT_NESA1626_STG5_100",
+    "FDT_NESA1628_STG4_AU",
+    "FDT_NESA1628_STG4_IM",
+    "FDT_NESA1628_STG4_IO",
+    "FDT_NESA1628_STG4_MC",
+    "FDT_NESA1628_STG5_AU",
+    "FDT_NESA1628_STG5_IM",
+    "FDT_NESA1628_STG5_IO",
+    "FDT_NESA1628_STG5_MC",
+    "IDT_NESA11200_STG6_YR11",
+    "IDT_NESA15200_STG6_YR12",
+    "MET_NESA1815_STG5_100",
+    "TEC_NESAXXX_STG4_YR7"
+  ],
+
+  PDHPE: [
+    "DAN_NESA2001_STG5_100",
+    "EEC_NESA31010_STG6_YR11",
+    "EEC_NESA31012_STG6_YR12",
+    "PAS_NESA38101_STG5_100",
+    "PDH_NESA11300_STG6_YR11",
+    "PDH_NESA15320_STG6_YR12",
+    "PDH_NESA2420_STG4_YR7",
+    "PDH_NESA2420_STG4_YR8",
+    "PDH_NESA2420_STG5_YR9",
+    "PDH_NESA2420_STG5_YR10",
+    "PDH_NESA2423_STG4_AU",
+    "PDH_NESA2423_STG4_IM",
+    "PDH_NESA2423_STG4_IO",
+    "PDH_NESA2423_STG4_MC",
+    "PDH_NESA2423_STG5_AU",
+    "PDH_NESA2423_STG5_IM",
+    "PDH_NESA2423_STG5_IO",
+    "PDH_NESA2423_STG5_MC",
+    "SLR_NESA35015_STG6_YR11",
+    "SLR_NESA35017_STG6_YR12"
+  ],
+
+  "Creative Arts": [
+    "ART_NESA11380_STG6_YR11",
+    "ART_NESA15400_STG6_YR12",
+    "MU1_NESA11280_STG6_YR11",
+    "MU1_NESA15290_STG6_YR12",
+    "MUE_NESA2051_STG5_100",
+    "MUS_NESA2051_STG4_YR8",
+    "VAE_NESA2061_STG5_100",
+    "VAM_NESA2061_STG4_YR7",
+    "VID_NESA35101_STG6_YR11",
+    "VID_NESA35103_STG6_YR12"
+  ],
+
+  LOTE: [
+    "JPC_NESA11750_STG6_YR11",
+    "JPC_NESA15830_STG6_YR12",
+    "JPN_NESA931_STG5_100",
+    "MLG_NESA931_STG4_YR7",
+    "MLG_NESA931_STG4_YR8",
+    "MLG_NESA931_STG5_YR9",
+    "MLG_NESA931_STG5_YR10"
+  ],
+
+  VET: [
+    "CKV_NESA26521_STG6_240",
+    "FTV_NESA41804_STG6_240",
+    "HOV_NESA26521_STG6_240",
+    "MEV_NESA59732_STG6_240",
+    "RTV_NESA26911_STG6_240"
+  ]
+};
+
+    function rankCode(code) {
+      if (/YR12$/.test(code)) return 0;
+      if (/YR11$/.test(code)) return 1;
+      if (/STG5_100$/.test(code)) return 2;
+      if (/YR10$/.test(code)) return 3;
+      if (/YR9$/.test(code)) return 4;
+      if (/YR8$/.test(code)) return 5;
+      if (/YR7$/.test(code)) return 6;
+      if (/STG5_/.test(code)) return 7;
+      if (/STG4_/.test(code)) return 8;
+      return 9;
+    }
+
+    // ===== Fields config =====
+    const fields = [
+      "Prefix",
+      "Subject_CourseCode",
+      "Unit_Topic",
+      "SequenceReference",
+      "Detail",
+      "FileTag",
+      "Author",
+      "Date or Year Published",
+      "Version"
+    ];
+
+    function generateSequenceOptions() {
+  const options = [];
+  for (let week = 1; week <= 11; week++) {
+    for (let resource = 0; resource <= 10; resource++) {
+      const value = `R${week}.${resource}`; // ✅ W -> R
+      options.push({ value, label: value });
+    }
+  }
+  return options;
+}
+
+// ✅ Prefixes that should switch SequenceReference into "TaskXofY" mode
+const ASSESSMENT_PREFIXES = new Set(["ATP", "ATM","APC","ATF", "ATN", "CTJ", "GWS"]);
+
+// ✅ Task-style SequenceReference options
+const TASK_SEQUENCE_OPTIONS = [
+  { value: "Task1of2", label: "Task1of2" },
+  { value: "Task2of2", label: "Task2of2" },
+
+  { value: "Task1of3", label: "Task1of3" },
+  { value: "Task2of3", label: "Task2of3" },
+  { value: "Task3of3", label: "Task3of3" },
+
+  { value: "Task1of4", label: "Task1of4" },
+  { value: "Task2of4", label: "Task2of4" },
+  { value: "Task3of4", label: "Task3of4" },
+  { value: "Task4of4", label: "Task4of4" }
+];
+
+// ✅ Rebuilds the SequenceReference dropdown based on Prefix selection
+function populateSequenceReference(prefixValue) {
+  const seqSelect = document.getElementById("SequenceReference");
+  if (!seqSelect) return;
+
+  const useTaskOptions = ASSESSMENT_PREFIXES.has(prefixValue);
+  const optionsToUse = useTaskOptions
+    ? TASK_SEQUENCE_OPTIONS
+    : (defaultOptions.SequenceReference || []);
+
+  // Clear + rebuild
+  seqSelect.innerHTML = "";
+  seqSelect.appendChild(new Option("--", ""));
+
+  optionsToUse.forEach((opt) => {
+    seqSelect.appendChild(new Option(opt.label, opt.value));
+  });
+
+  // Clear current selection (avoids invalid leftover values)
+  seqSelect.value = "";
+
+  updateAllOutputs();
+}
+
+
+    const defaultOptions = {
+      Prefix: [
+	{ value: "ACC", label: "Accreditation Documents (ACC)" },
+        { value: "ACS", label: "Absent Cover Sheet (ACS)" },
+        { value: "ADM", label: "Admin & Compliance (ADM)" },
+	{ value: "ATP", label: "Assessment Task Pack (ATP)" },
+        { value: "GRD", label: "Assessment Grid (GRD)" },
+        { value: "ATP", label: "Assessment Task Pack (ATP)" },
+        { value: "ATM", label: "Assessment Task Material (ATM)" },
+        { value: "ATF", label: "Assessment Task Feedback (ATF)" },
+        { value: "ATN", label: "Assessment Task Notification (ATN)" },
+        { value: "BDG", label: "Budget Files (BDG)" },
+        { value: "CTJ", label: "Consistent Teacher Judgement (CTJ)" },
+        { value: "CON", label: "Content for Publication (CON)" },
+	{ value: "DAT", label: "Data Analysis & Insight Artefacts (DAT)" },
+        { value: "ERN", label: "Enrolment & Registration Number (ERN)" },
+        { value: "EVR", label: "External Validation Records (EVR)" },
+        { value: "FBK", label: "Feedback (FBK)" },
+        { value: "GWS", label: "Graded Work Sample (GWS)" },
+        { value: "FIN", label: "Financial Transactions (FIN)" },
+        { value: "OTL", label: "Lesson Outline (OTL)" },
+        { value: "LTR", label: "Letters (LTR)" },
+        { value: "AGD", label: "Agendas & Meeting Minutes (AGD)" },
+        { value: "PLD", label: "Professional Learning Development (PLD)" },
+        { value: "PRG", label: "Program Documents (PRG)" },
+        { value: "REF", label: "Reference Material (REF)" },
+        { value: "REG", label: "Registers (REG)" },
+	{ value: "RES", label: "Resource (RES)" },
+        { value: "RPT", label: "Reporting & Tracking (RPT)" },
+        { value: "RUN", label: "Runsheet (RUN)" },
+        { value: "SAR", label: "School Annual Report (SAR)" },
+        { value: "SEP", label: "School Excellence Plan (SEP)" },
+        { value: "SSQ", label: "Scope and Sequence (SSQ)" },
+        { value: "SWS", label: "Student Work Sample (SWS)" },
+        { value: "TRC", label: "Teacher Report Comments (TRC)" },
+        { value: "TPL", label: "Templates (TPL)" },
+        { value: "VOR", label: "Variation of Routine (VOR)" },
+        { value: "WEL", label: "Wellbeing (WEL)" },
+        { value: "WHS", label: "Work Health and Safety (WHS)" }
+      ],
+      FileTag: [
+        { value: "LA", label: "Lower Ability (LA)" },
+        { value: "MA", label: "Mixed Ability (MA)" },
+        { value: "EALD", label: "English as an Additional Language/Dialect (EAL/D)" },
+        { value: "APP", label: "Aboriginal Pedagogical Practice (APP)" },
+        { value: "HPGE", label: "High Potential and Gifted Education (HPGE)" },
+        { value: "HPGC", label: "High Potential and Gifted, Creative (HPGC)" },
+        { value: "HPGI", label: "High Potential and Gifted, Intellectual (HPGI)" },
+        { value: "HPGP", label: "High Potential and Gifted, Physical (HPGP)" },
+        { value: "HPGS", label: "High Potential and Gifted, Social Emotional (HPGS)" },
+        { value: "TC", label: "Teacher Copy (TC)" }
+      ],
+      SequenceReference: generateSequenceOptions(),
+      Version: [
+        { value: "v0.1", label: "v0.1 (Draft)" },
+        { value: "v0.2", label: "v0.2 (Draft)" },
+        { value: "v0.3", label: "v0.3 (Draft)" },
+        { value: "v0.4", label: "v0.4 (Draft)" },
+        { value: "v0.5", label: "v0.5 (Draft)" },
+        { value: "v1.0", label: "v1.0 (Published)" },
+        { value: "v2.0", label: "v2.0 (Published)" },
+        { value: "v3.0", label: "v3.0 (Published)" },
+        { value: "v4.0", label: "v4.0 (Published)" },
+        { value: "v5.0", label: "v5.0 (Published)" }
+      ]
+    };
+
+    const form = document.getElementById("form");
+    const fileNameEl = document.getElementById("fileName");
+
+    let storedFileNames = [];
+
+    // ===== UI BUILD =====
+    function createField(key) {
+      const wrapper = document.createElement("div");
+      let fieldElement;
+
+      const textInputFields = ["Topic", "Detail", "Author"]; // Unit_Topic handled specially
+
+      wrapper.className = "field-wrapper flex flex-col items-center text-[10px]";
+
+      const label = document.createElement("label");
+      label.textContent = key;
+      label.className =
+        "text-center font-semibold mb-1 text-[--navy] h-8 flex items-center justify-center";
+
+      // === Date/Year control ===
+      if (key === "Date or Year Published") {
+        wrapper.append(label);
+        const yearSelect = document.createElement("select");
+        yearSelect.className =
+          "w-full px-2 py-1 rounded border border-[--green] bg-white text-[--navy] text-[10px] mb-1";
+        yearSelect.innerHTML = `<option value="">-- Select Year --</option>`;
+        for (let y = 2022; y <= 2035; y++) {
+          const opt = document.createElement("option");
+          opt.value = y.toString();
+          opt.textContent = y;
+          yearSelect.appendChild(opt);
+        }
+        const hiddenDate = document.createElement("input");
+        hiddenDate.type = "hidden";
+        hiddenDate.id = key;
+        const toggleBtn = document.createElement("button");
+        toggleBtn.type = "button";
+        toggleBtn.textContent = "📅 Choose exact date";
+        toggleBtn.className = "text-xs text-blue-700 underline mb-1";
+        const dateInput = document.createElement("input");
+        dateInput.type = "date";
+        dateInput.className =
+          "w-full px-2 py-1 rounded border border-[--green] bg-white text-[--navy] text-[10px] hidden";
+        function updateDateValue() {
+          let formatted = "";
+          if (dateInput.value) {
+            const [yy, mm, dd] = dateInput.value.split("-");
+            formatted = yy + dd + mm;
+          } else if (yearSelect.value) {
+            formatted = yearSelect.value;
+          }
+          hiddenDate.value = formatted;
+          updateAllOutputs();
+        }
+        toggleBtn.addEventListener("click", () => {
+          const showingDate = !dateInput.classList.contains("hidden");
+          if (showingDate) {
+            dateInput.classList.add("hidden");
+            toggleBtn.textContent = "📅 Choose exact date";
+            dateInput.value = "";
+          } else {
+            dateInput.classList.remove("hidden");
+            toggleBtn.textContent = "↩ Back to year view";
+            yearSelect.value = "";
+          }
+          updateDateValue();
+        });
+        yearSelect.addEventListener("change", () => {
+          dateInput.value = "";
+          updateDateValue();
+        });
+        dateInput.addEventListener("change", updateDateValue);
+        wrapper.append(yearSelect, toggleBtn, dateInput, hiddenDate);
+        form.appendChild(wrapper);
+        return;
+      }
+
+      // === Subject_CourseCode with KLA headings ===
+      if (key === "Subject_CourseCode") {
+        wrapper.append(label);
+        const select = document.createElement("select");
+        select.id = key;
+        select.className =
+          "w-full px-2 py-1 rounded border border-[--green] bg-white text-[--navy] text-[10px]";
+        select.appendChild(new Option("--", ""));
+        Object.keys(SUBJECTS_BY_KLA).forEach((kla) => {
+  	const group = document.createElement("optgroup");
+  	group.label = `${kla}`;
+  
+  	// Use the order from SUBJECTS_BY_KLA exactly as you wrote it
+  	const items = SUBJECTS_BY_KLA[kla];
+
+  	items.forEach((code) => {
+  	  const opt = new Option(code, code);
+    	group.appendChild(opt);
+ 	 });
+ 	 select.appendChild(group);
+	});
+        select.addEventListener("change", () => {
+          populateUnitTopics(select.value);
+          updateAllOutputs();
+        });
+        wrapper.append(select);
+        form.appendChild(wrapper);
+        return;
+      }
+
+      // === Unit_Topic dynamic select ===
+      if (key === "Unit_Topic") {
+        wrapper.append(label);
+        const hiddenValue = document.createElement("input");
+        hiddenValue.type = "hidden";
+        hiddenValue.id = "Unit_Topic";
+        const unitSelect = document.createElement("select");
+        unitSelect.id = "Unit_Topic_select";
+        unitSelect.className =
+          "w-full px-2 py-1 rounded border border-[--green] bg-white text-[--navy] text-[10px] mb-1";
+        unitSelect.innerHTML = `<option value="">-- Select Unit/Module --</option>`;
+        const customInput = document.createElement("input");
+        customInput.type = "text";
+        customInput.placeholder = "Custom...";
+        customInput.className =
+          "w-full px-2 py-1 rounded border border-[--green] bg-white text-[--navy] text-[10px] hidden";
+        unitSelect.addEventListener("change", () => {
+          if (unitSelect.value === "__custom") {
+            customInput.classList.remove("hidden");
+            customInput.focus();
+            hiddenValue.value = customInput.value.trim();
+          } else {
+            customInput.classList.add("hidden");
+            hiddenValue.value = unitSelect.value;
+          }
+          updateAllOutputs();
+        });
+        customInput.addEventListener("input", () => {
+          hiddenValue.value = customInput.value.trim();
+          updateAllOutputs();
+        });
+        wrapper.append(unitSelect, customInput, hiddenValue);
+        form.appendChild(wrapper);
+        return;
+      }
+// === FileTag custom select (like Unit_Topic) ===
+if (key === "FileTag") {
+  wrapper.append(label);
+
+  // This hidden input is what updateAllOutputs() will read
+  const hiddenValue = document.createElement("input");
+  hiddenValue.type = "hidden";
+  hiddenValue.id = "FileTag";
+
+  // Dropdown
+  const tagSelect = document.createElement("select");
+  tagSelect.id = "FileTag_select";
+  tagSelect.className =
+    "w-full px-2 py-1 rounded border border-[--green] bg-white text-[--navy] text-[10px] mb-1";
+  tagSelect.innerHTML = `<option value="">-- Select File Tag --</option>`;
+
+  // Populate from your existing defaultOptions.FileTag
+  (defaultOptions.FileTag || []).forEach((opt) => {
+    const o = document.createElement("option");
+    o.value = opt.value;      // e.g. "LA"
+    o.textContent = opt.label; // e.g. "LA (Lower Ability)"
+    tagSelect.appendChild(o);
+  });
+
+  // Custom option
+  const customOpt = document.createElement("option");
+  customOpt.value = "__custom";
+  customOpt.textContent = "Custom ClassCode";
+  tagSelect.appendChild(customOpt);
+
+  // Custom text input (hidden until "Custom…" is chosen)
+  const customInput = document.createElement("input");
+  customInput.type = "text";
+  customInput.placeholder = "Custom FileTag...";
+  customInput.className =
+    "w-full px-2 py-1 rounded border border-[--green] bg-white text-[--navy] text-[10px] hidden";
+
+  tagSelect.addEventListener("change", () => {
+    if (tagSelect.value === "__custom") {
+      customInput.classList.remove("hidden");
+      customInput.focus();
+      hiddenValue.value = customInput.value.trim();
+    } else {
+      customInput.classList.add("hidden");
+      customInput.value = "";
+      hiddenValue.value = tagSelect.value;
+    }
+    updateAllOutputs();
+  });
+
+  customInput.addEventListener("input", () => {
+    hiddenValue.value = customInput.value.trim();
+    updateAllOutputs();
+  });
+
+  wrapper.append(tagSelect, customInput, hiddenValue);
+  form.appendChild(wrapper);
+  return;
+}
+
+
+      // === Default inputs/selects ===
+      wrapper.append(label);
+      if (textInputFields.includes(key)) {
+        fieldElement = document.createElement("input");
+        fieldElement.type = "text";
+        fieldElement.placeholder = "Custom...";
+        fieldElement.addEventListener("input", updateAllOutputs);
+      } else {
+        fieldElement = document.createElement("select");
+        fieldElement.appendChild(new Option("--", ""));
+        if (defaultOptions[key]) {
+          defaultOptions[key].forEach((opt) =>
+            fieldElement.appendChild(new Option(opt.label, opt.value))
+          );
+        }
+        fieldElement.addEventListener("change", updateAllOutputs);
+      }
+      fieldElement.id = key;
+      fieldElement.className =
+        "w-full px-2 py-1 rounded border border-[--green] bg-white text-[--navy] text-[10px]";
+      wrapper.append(fieldElement);
+      form.appendChild(wrapper);
+    }
+
+    function populateUnitTopics(courseCode) {
+      const unitSelect = document.getElementById("Unit_Topic_select");
+      const hiddenValue = document.getElementById("Unit_Topic");
+      const customInput = unitSelect
+        ? unitSelect.parentElement.querySelector('input[type="text"]')
+        : null;
+      if (!unitSelect || !hiddenValue) return;
+      unitSelect.innerHTML = `<option value="">-- Select Unit/Module --</option>`;
+      if (customInput) {
+        customInput.classList.add("hidden");
+        customInput.value = "";
+      }
+      hiddenValue.value = "";
+      const list = UNIT_TOPICS_BY_COURSE[courseCode] || [];
+      list.forEach((item) => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.textContent = item;
+        unitSelect.appendChild(opt);
+      });
+      const customOpt = document.createElement("option");
+      customOpt.value = "__custom";
+      customOpt.textContent = "Custom…";
+      unitSelect.appendChild(customOpt);
+    }
+
+    // Build all fields
+    fields.forEach(createField);
+// ✅ PASTE THIS BLOCK RIGHT HERE
+const prefixSel = document.getElementById("Prefix");
+if (prefixSel) {
+  prefixSel.addEventListener("change", () => {
+    populateSequenceReference(prefixSel.value);
+  });
+
+  // Run once on load (so it starts correct)
+  populateSequenceReference(prefixSel.value);
+}
+
+    // Initialize Unit_Topic list (empty until a subject is chosen)
+    const courseSel = document.getElementById("Subject_CourseCode");
+    if (courseSel) {
+      courseSel.addEventListener("change", () => {
+        populateUnitTopics(courseSel.value);
+      });
+    }
+
+    // ===== Output builder =====
+    function updateAllOutputs() {
+      const parts = fields
+        .map((f) => {
+          const el = document.getElementById(f);
+          if (!el) return null;
+          if (f === "Date or Year Published") return el.value; // YYYY or YYYYDDMM
+          return el.value;
+        })
+        .filter(Boolean);
+      fileNameEl.textContent = parts.join("_") || "_";
+    }
+
+    // ===== Stored list renderer =====
+    function renderStoredList() {
+      const container = document.getElementById("storedList");
+      if (!container) return;
+
+      if (!storedFileNames.length) {
+        container.innerHTML =
+          '<p class="text-xs text-gray-600 italic text-center">No stored file names yet.</p>';
+        return;
+      }
+
+      container.innerHTML = "";
+      const ul = document.createElement("ul");
+      ul.className = "space-y-1 text-xs";
+
+      storedFileNames.forEach((name) => {
+        const li = document.createElement("li");
+        li.className =
+          "flex items-center justify-between gap-2 bg-white/70 rounded px-2 py-1";
+
+        const span = document.createElement("span");
+        span.className = "font-mono break-all text-[--green]";
+        span.textContent = name;
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className =
+          "shrink-0 text-[10px] px-2 py-1 rounded bg-[--navy] text-white hover:bg-opacity-90";
+        btn.textContent = "Copy";
+        btn.addEventListener("click", () => copyText(name, btn));
+
+        li.append(span, btn);
+        ul.appendChild(li);
+      });
+
+      container.appendChild(ul);
+    }
+
+    // ===== Generic copy helper =====
+    function copyText(textToCopy, buttonEl) {
+      if (!textToCopy || textToCopy === "_") return;
+      const ta = document.createElement("textarea");
+      ta.value = textToCopy;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand("copy");
+        if (buttonEl) {
+          const original = buttonEl.innerHTML;
+          buttonEl.innerHTML = "✅ Copied!";
+          setTimeout(() => {
+            buttonEl.innerHTML = original;
+          }, 2000);
+        }
+      } catch (e) {
+        console.error("Copy failed:", e);
+      }
+      document.body.removeChild(ta);
+    }
+
+    // Copy current name
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      copyText(fileNameEl.textContent, document.getElementById("copyBtn"));
+    });
+
+    // Store current name
+    document.getElementById("storeBtn").addEventListener("click", () => {
+      const current = fileNameEl.textContent.trim();
+      if (!current || current === "_") return;
+      storedFileNames.push(current);
+      renderStoredList();
+      const btn = document.getElementById("storeBtn");
+      const original = btn.innerHTML;
+      btn.innerHTML = "✅ Stored!";
+      setTimeout(() => {
+        btn.innerHTML = original;
+      }, 1500);
+    });
+
+    // Reset
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      form.reset();
+// Reset FileTag custom control
+const ftSel = document.getElementById("FileTag_select");
+const ftHidden = document.getElementById("FileTag");
+if (ftSel && ftHidden) {
+  ftSel.value = "";
+  const ftCustom = ftSel.parentElement.querySelector('input[type="text"]');
+  if (ftCustom) {
+    ftCustom.classList.add("hidden");
+    ftCustom.value = "";
+  }
+  ftHidden.value = "";
+}
+
+      const dp = document.getElementById("Date or Year Published");
+      if (dp) dp.value = "";
+      populateUnitTopics("");
+      const hidden = document.getElementById("Unit_Topic");
+      if (hidden) hidden.value = "";
+      updateAllOutputs();
+
+      storedFileNames = [];
+      renderStoredList();
+    });
+
+    updateAllOutputs();
+    renderStoredList();
+
+// ==========================================
+  // ===== 🔢 GLOBAL USER COUNTER LOGIC =====
+  // ==========================================
+  
+  // 1. Define a unique namespace for your tool. 
+  // Change "airds-hs-file-tool" to something unique if you want a fresh counter.
+  const COUNTER_NAMESPACE = "airds-hs-file-tool"; 
+  const COUNTER_KEY = "copy_clicks";
+  const counterDisplay = document.getElementById("usageCounter");
+
+  // Helper: Fetch and display the count
+  function updateCounterDisplay(shouldIncrement = false) {
+    // If shouldIncrement is true, we use the '/up' endpoint, otherwise just the read endpoint
+    const endpoint = shouldIncrement ? "up" : "";
+    const url = `https://api.counterapi.dev/v1/${COUNTER_NAMESPACE}/${COUNTER_KEY}/${endpoint}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.count) {
+          counterDisplay.textContent = data.count;
+        }
+      })
+      .catch(err => {
+        console.log("Counter API Error:", err);
+        // If it fails, just show a fallback or keep previous text
+        if(counterDisplay.textContent === "...") counterDisplay.textContent = "(offline)";
+      });
+  }
+
+  // 2. Load the current count immediately when the page opens
+  updateCounterDisplay(false);
+
+  // 3. Hook into the existing Copy Button
+  const existingCopyBtn = document.getElementById("copyBtn");
+  
+  // We add a specifically new listener just for the counter
+  existingCopyBtn.addEventListener("click", () => {
+    // Only increment if there is actually text to copy
+    const currentName = document.getElementById("fileName").textContent;
+    if (currentName && currentName !== "_") {
+      updateCounterDisplay(true); // true = increment count
+    }
+  });
+  </script>
+
+  <div class="fixed inset-0 flex items-center justify-center pointer-events-none z-40">
+      </div>
+</body>
+</html>
+
